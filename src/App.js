@@ -11,35 +11,48 @@ import {
   Heading,
   Text,
 } from "@chakra-ui/react";
-import { RiDeleteBin7Line } from "react-icons/ri";
+import { RiDeleteBin7Line, RiEdit2Fill } from "react-icons/ri";
 const App = () => {
   const [activity, setActivity] = useState("");
   const [listData, setListData] = useState([]);
   const addHandler = () => {
     setListData((listData) => {
-      const updatedList = [...listData, activity];
+      const allInputData = {
+        id: new Date().getTime().toString(),
+        name: activity,
+      };
+      const updatedList = [...listData, allInputData];
       console.log(updatedList);
       setActivity("");
       return updatedList;
     });
   };
-  const RemoveElement = (i) => {
-    const updatedListData = listData.filter((elem, id) => {
-      return i !== id;
+  const RemoveElement = (index) => {
+    const updatedListData = listData.filter((elem) => {
+      return index !== elem.id;
     });
     setListData(updatedListData);
   };
   const Removeall = () => {
     setListData([]);
   };
+
+  const editButton = (id) => {
+    const objIndex = listData.find((elem) => {
+      return elem.id === id;
+    });
+    console.log(objIndex);
+  };
   return (
-    <Container mt="8" py='16'>
+    <Container mt="8" w={"full"} >
+      
       <Heading
         children="my TodoList"
         textTransform={"uppercase"}
         textAlign={"center"}
         fontFamily={"mono"}
       />
+    
       <HStack mt={"4"}>
         <Input
           type="text"
@@ -55,7 +68,6 @@ const App = () => {
         >
           Enter to add
         </Button>
-        
       </HStack>
       <Text
         children="Your list is here"
@@ -64,10 +76,10 @@ const App = () => {
         fontFamily={"monospace"}
         mt="4"
       />
-      <Box h={"fit-content"} boxShadow={"lg"} mt="3" borderRadius={'2xl'}>
+      <Box boxShadow={"lg"} mt="3" borderRadius={"2xl"}>
         <VStack>
-          {listData.map((el, i) => (
-            <HStack key={i}>
+          {listData.map((el) => (
+            <HStack key={el.id}>
               <UnorderedList>
                 <ListItem
                   textColor={"ThreeDShadow"}
@@ -75,7 +87,7 @@ const App = () => {
                   fontSize={"xl"}
                   fontWeight={"extrabold"}
                 >
-                  {el}
+                  {el.name}
                 </ListItem>
               </UnorderedList>
 
@@ -83,17 +95,26 @@ const App = () => {
                 size={"sm"}
                 variant={"ghost"}
                 colorScheme="purple"
-                onClick={() => RemoveElement(i)}
+                onClick={() => RemoveElement(el.id)}
               >
                 <RiDeleteBin7Line />
               </Button>
+              <Button onClick={() => editButton(el.id)}>
+                <RiEdit2Fill />
+              </Button>
             </HStack>
           ))}
-          {
-            listData.length >=1 && <Button colorScheme='purple' variant='solid' mb='2' onClick={()=>Removeall()} borderRadius={'2xl'}>
-            Remove all
+          {listData.length >= 1 && (
+            <Button
+              colorScheme="purple"
+              variant="solid"
+              mb="2"
+              onClick={() => Removeall()}
+              borderRadius={"2xl"}
+            >
+              Remove all
             </Button>
-          }
+          )}
         </VStack>
       </Box>
     </Container>
